@@ -10,7 +10,7 @@ const BoardProvider = ({ children }) => {
         dispatch({ type: "CREATE_BOARD", payload: { title } });
     };
 
-    const handleEditBoardTitle = (id, title) => {
+    const handleEditBoardTitle = ({ id, title }) => {
         dispatch({ type: "EDIT_BOARD_TITLE", payload: { id, title } });
     };
 

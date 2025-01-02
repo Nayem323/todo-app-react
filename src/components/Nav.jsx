@@ -1,8 +1,9 @@
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import { useBoard } from "../contexts/Board";
 
 export default function Nav() {
     const { boards } = useBoard();
+    const { boardId } = useParams();
 
     return (
         <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
@@ -56,7 +57,11 @@ export default function Nav() {
                         {boards.map((board) => (
                             <Link
                                 key={board.id}
-                                className="flex items-center px-4 py-2 mt-1 text-gray-600 transition-colors duration-300 transform rounded hover:bg-gray-100 hover:text-gray-700"
+                                className={`flex items-center px-4 py-2 mt-1 transition-colors duration-300 transform rounded ${
+                                    boardId === board.id
+                                        ? "text-customBlueDark bg-customBlueLight hover:bg-customBlue"
+                                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-700"
+                                }`}
                                 to={`/board/${board.id}`}
                             >
                                 <svg

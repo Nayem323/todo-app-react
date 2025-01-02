@@ -6,6 +6,7 @@ import TaskProvider from "./contexts/Task.jsx";
 import ListProvider from "./contexts/List.jsx";
 import BoardProvider from "./contexts/Board.jsx";
 import { StrictMode } from "react";
+import { ToastContainer } from "react-toastify";
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")).render(
             <ListProvider>
                 <TaskProvider>
                     <RouterProvider router={router} />
+                    <ToastContainer />
                 </TaskProvider>
             </ListProvider>
         </BoardProvider>

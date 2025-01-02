@@ -13,14 +13,14 @@ const ListProvider = ({ children }) => {
         });
     };
 
-    const handleEditListTitle = (id, title) => {
+    const handleEditListTitle = ({ id, title }) => {
         dispatch({
             type: "EDIT_LIST_TITLE",
             payload: { id, title },
         });
     };
 
-    const handleChangeBoard = (id, boardId) => {
+    const handleChangeBoard = ({ id, boardId }) => {
         dispatch({
             type: "CHANGE_BOARD",
             payload: { id, boardId },

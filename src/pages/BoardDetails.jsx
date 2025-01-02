@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import AddItem from "../components/AddItem";
 import AddItemForm from "../components/AddItemForm";
 import { useList } from "../contexts/List";
@@ -11,11 +11,12 @@ import { useTask } from "../contexts/Task";
 export default function BoardDetails() {
     const [editMode, setEditMode] = useState(false);
     const [title, setTitle] = useState("");
+    const [boardEditMode, setBoardEditMode] = useState(false);
+    const boardTitleRef = useRef();
     const { boardId } = useParams();
-    const { lists, createList, deleteTaskFromList, addTaskToList, sortTasks } =
-        useList();
-    const { boards, addListToBoard } = useBoard();
-    const { tasks, changeTaskList } = useTask();
+    const { lists, createList, sortTasks } = useList();
+    const { boards, addListToBoard, editBoard } = useBoard();
+    const { changeTaskList } = useTask();
 
     const submitHandler = (e) => {
         e.preventDefault();
@@ -52,14 +53,44 @@ export default function BoardDetails() {
         }
     };
 
+    const handleEditBoard = (e) => {
+        editBoard({ id: boardId, title: boardTitleRef.current.value });
+        setBoardEditMode(false);
+    };
+
     return (
         <>
             {board ? (
                 <div className="flex-1 flex flex-col overflow-auto bg-gray-50">
                     <header className="bg-customBlueDark shadow-md p-4 flex items-center justify-between fixed w-full">
-                        <h1 className="text-xl font-semibold text-white">
-                            {board.title}
-                        </h1>
+                        {boardEditMode ? (
+                            <div className="flex items-center">
+                                <input
+                                    className="text-xl font-semibold text-gray-800 p-2 focus:outline-none"
+                                    defaultValue={board.title}
+                                    ref={boardTitleRef}
+                                />
+                                <button
+                                    className="ml-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                                    onClick={handleEditBoard}
+                                >
+                                    Update
+                                </button>
+                                <button
+                                    className="ml-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                                    onClick={() => setBoardEditMode(false)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        ) : (
+                            <h1
+                                className="text-xl font-semibold text-white w-52"
+                                onClick={() => setBoardEditMode(true)}
+                            >
+                                {board.title}
+                            </h1>
+                        )}
                     </header>
                     <DragDropContext onDragEnd={dragHandler}>
                         <main className="p-4 py-8 mt-16">

@@ -5,16 +5,18 @@ import { useTask } from "../contexts/Task";
 import { useList } from "../contexts/List";
 import { useBoard } from "../contexts/Board";
 import TaskCard from "./TaskCard";
+import Actions from "./Actions";
 import { Droppable } from "@hello-pangea/dnd";
 
 const ListCard = ({ list }) => {
     const [editMode, setEditMode] = useState(false);
     const [taskTitle, setTaskTitle] = useState("");
+    const [listTitle, setListTitle] = useState(list.title);
+    const [editListMode, setEditListMode] = useState(false);
 
     const { tasks, createTask } = useTask();
-    const { addTaskToList, deleteList, deleteTaskFromList } = useList();
-    const { addTaskToBoard, deleteListFromBoard, deleteTaskFromBoard } =
-        useBoard();
+    const { addTaskToList, editList } = useList();
+    const { addTaskToBoard } = useBoard();
 
     const submitHandler = (e) => {
         e.preventDefault();
@@ -26,13 +28,10 @@ const ListCard = ({ list }) => {
         setEditMode(false);
     };
 
-    const removeHandler = (list) => {
-        deleteList(list.id);
-        deleteListFromBoard({ id: list.boardId, listId: list.id });
-        list.tasks.forEach((taskId) => {
-            deleteTaskFromList({ id: list.id, taskId });
-            deleteTaskFromBoard({ id: boardId, taskId });
-        });
+    const editListHandler = (e) => {
+        e.preventDefault();
+        editList({ id: list.id, title: listTitle });
+        setEditListMode(false);
     };
 
     return (
@@ -44,29 +43,29 @@ const ListCard = ({ list }) => {
                     {...provided.droppableProps}
                 >
                     <div>
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-lg font-semibold text-gray-800 truncate">
-                                {list.title}
-                            </p>
-                            <button
-                                className="pl-1"
-                                onClick={() => removeHandler(list)}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    className="h-4 current-fill"
-                                    viewBox="0 0 16 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                                    />
-                                </svg>
-                            </button>
+                        <div className="flex items-center justify-between mb-4 relative">
+                            {editListMode ? (
+                                <AddItemForm
+                                    type="List"
+                                    setEditMode={setEditListMode}
+                                    title={listTitle}
+                                    onChangeHandler={(e) =>
+                                        setListTitle(e.target.value)
+                                    }
+                                    submitHandler={editListHandler}
+                                    label="Update"
+                                />
+                            ) : (
+                                <>
+                                    <p
+                                        className="text-lg font-semibold text-gray-800 truncate w-full"
+                                        onClick={() => setEditListMode(true)}
+                                    >
+                                        {list.title}
+                                    </p>
+                                    <Actions item={list} type="list" />
+                                </>
+                            )}
                         </div>
 
                         {list.tasks
